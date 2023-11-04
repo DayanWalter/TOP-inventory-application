@@ -24,8 +24,8 @@ async function main() {
   console.log('Debug: About to connect');
   await mongoose.connect(mongoDB);
   console.log('Debug: Should be connected?');
-  await createItems();
   await createCategories();
+  await createItems();
 
   console.log('Debug: Closing mongoose');
   mongoose.connection.close();
@@ -35,6 +35,12 @@ async function main() {
 // genre[0] will always be the Fantasy genre, regardless of the order
 // in which the elements of promise.all's argument complete.
 
+async function categoryCreate(index, name, description) {
+  const category = new Category({ name: name, description: description });
+  await category.save();
+  categories[index] = category;
+  console.log(`Added category: ${name}`);
+}
 async function itemCreate(index, name, description, category, price, stock) {
   const itemdetail = {
     name: name,
@@ -50,21 +56,22 @@ async function itemCreate(index, name, description, category, price, stock) {
   console.log(`Added item: ${name}`);
 }
 
-async function categoryCreate(index, name, description) {
-  const category = new Category({ name: name, description: description });
-  await category.save();
-  categorys[index] = category;
-  console.log(`Added category: ${name}`);
-}
-
 async function createCategories() {
   console.log('Adding category');
   await Promise.all([
-    categoryCreate(0, 'Elektronik'),
-    categoryCreate(1, 'Kleidung'),
-    categoryCreate(2, 'Haushaltswaren'),
-    categoryCreate(3, 'Bürobedarf'),
-    categoryCreate(4, 'Sportartikel'),
+    categoryCreate(0, 'Elektronik', 'Alle Arten von elektronischen Geräten'),
+    categoryCreate(
+      1,
+      'Kleidung',
+      'Verschiedene Kleidungsstücke und Accessoires'
+    ),
+    categoryCreate(
+      2,
+      'Haushaltswaren',
+      'Nützliche Haushaltsgegenstände für den Alltag'
+    ),
+    categoryCreate(3, 'Bürobedarf', 'Alles, was für das Büro benötigt wird'),
+    categoryCreate(4, 'Sportartikel', 'Artikel für verschiedene Sportarten'),
   ]);
 }
 
@@ -76,7 +83,7 @@ async function createItems() {
       'Smartphone',
       'Hochauflösendes Mobiltelefon',
       categories[0],
-      '599,99',
+      599.99,
       25
     ),
     itemCreate(
@@ -84,7 +91,7 @@ async function createItems() {
       'T-Shirt',
       'Baumwoll-T-Shirt, Größe M, Schwarz',
       categories[1],
-      '19,99',
+      19.99,
       50
     ),
     itemCreate(
@@ -92,16 +99,23 @@ async function createItems() {
       'Kochtopf-Set',
       'Edelstahl-Kochgeschirr-Set, 10-teilig',
       categories[2],
-      '79,99',
+      79.99,
       20
     ),
-    itemCreate(3, 'Laptop', 'Leistungsstarker Arbeitslaptop', 3, '999,99', 15),
+    itemCreate(
+      3,
+      'Laptop',
+      'Leistungsstarker Arbeitslaptop',
+      categories[3],
+      999.99,
+      15
+    ),
     itemCreate(
       4,
       'Yogamatte',
       'Rutschfeste, gepolsterte Yogamatte',
       categories[4],
-      '29,99',
+      29.99,
       30
     ),
     itemCreate(
@@ -109,7 +123,7 @@ async function createItems() {
       'Kopfhörer',
       'Kabellose Over-Ear-Kopfhörer',
       categories[0],
-      '129,99',
+      129.99,
       40
     ),
     itemCreate(
@@ -117,7 +131,7 @@ async function createItems() {
       'Jeans',
       'Klassische Jeans, Denim, Größe 32',
       categories[1],
-      '49,99',
+      49.99,
       35
     ),
     itemCreate(
@@ -125,7 +139,7 @@ async function createItems() {
       'Staubsauger',
       'Beutelloser Bodenstaubsauger, hohe Saugleistung',
       categories[2],
-      '149,99',
+      149.99,
       10
     ),
     itemCreate(
@@ -133,7 +147,7 @@ async function createItems() {
       'Drucker',
       'Farbiger Laserdrucker, WLAN-fähig',
       categories[3],
-      '249,99',
+      249.99,
       8
     ),
     itemCreate(
@@ -141,7 +155,7 @@ async function createItems() {
       'Fußball',
       'Größe 5, offizieller Spielball',
       categories[4],
-      '19,99',
+      19.99,
       25
     ),
   ]);
