@@ -10,7 +10,13 @@ exports.index = asyncHandler(async (req, res, next) => {
   res.send('NOT IMPLEMENTED: Index ');
 });
 // Display all items
+exports.item_list = asyncHandler(async (req, res, next) => {
+  res.send('NOT IMPLEMENTED: item list');
+});
 // Display specific item
+exports.item_detail = asyncHandler(async (req, res, next) => {
+  res.send('NOT IMPLEMENTED: item detail');
+});
 // Display item create form on GET.
 exports.item_create_get = asyncHandler(async (req, res, next) => {
   res.send('NOT IMPLEMENTED: item create GET');
