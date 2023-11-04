@@ -50,7 +50,13 @@ exports.item_detail = asyncHandler(async (req, res, next) => {
 });
 // Display item create form on GET.
 exports.item_create_get = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item create GET');
+  // Get all authors and genres, which we can use for adding to our book.
+  const allCategories = await Category.find().exec();
+
+  res.render('item_form', {
+    title: 'Create Item',
+    category: allCategories,
+  });
 });
 // Handle item create form on POST.
 exports.item_create_post = asyncHandler(async (req, res, next) => {
