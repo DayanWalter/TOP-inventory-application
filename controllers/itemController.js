@@ -32,7 +32,21 @@ exports.item_list = asyncHandler(async (req, res, next) => {
 });
 // Display specific item
 exports.item_detail = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item detail');
+  // Get details of items and categories specific to an item
+  const item = await Item.findById(req.params.id).populate('category').exec();
+
+  if (item === null) {
+    // No results.
+    const err = new Error('Item not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('item_detail', {
+    title: item.name,
+    item,
+    // categories,
+  });
 });
 // Display item create form on GET.
 exports.item_create_get = asyncHandler(async (req, res, next) => {
