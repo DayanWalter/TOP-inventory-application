@@ -59,9 +59,53 @@ exports.item_create_get = asyncHandler(async (req, res, next) => {
   });
 });
 // Handle item create form on POST.
-exports.item_create_post = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item create POST');
-});
+exports.item_create_post = [
+  // Validate and sanitize fields.
+  body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
+  body('category', 'Category must not be empty')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('description', 'Description must not be empty')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('price', 'Price must not be empty').trim().isLength({ min: 1 }).escape(),
+  body('stock', 'Stock must not be empty').trim().isLength({ min: 1 }).escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a Book object with escaped and trimmed data.
+    const item = new Item({
+      name: req.body.name,
+      category: req.body.category,
+      description: req.body.description,
+      price: req.body.price,
+      stock: req.body.stock,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/error messages.
+
+      // Get all categories for form.
+      const allCategories = await Category.find().exec();
+
+      res.render('item_form', {
+        title: 'Create Item',
+        category: allCategories,
+        item,
+        errors: errors.array(),
+      });
+    } else {
+      // Data from form is valid. Save book.
+      await item.save();
+      res.redirect(item.url);
+    }
+  }),
+];
 // Display item delete form on GET
 exports.item_delete_get = asyncHandler(async (req, res, next) => {
   res.send('NOT IMPLEMENTED: item delete GET');
