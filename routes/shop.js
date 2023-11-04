@@ -59,3 +59,5 @@ router.get('/category/:id', category_controller.category_detail);
 
 // Get request for all categories
 router.get('/categories/', category_controller.category_list);
+
+module.exports = router;
