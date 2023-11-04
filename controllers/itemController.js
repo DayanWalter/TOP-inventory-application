@@ -21,7 +21,14 @@ exports.index = asyncHandler(async (req, res, next) => {
 });
 // Display all items
 exports.item_list = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item list');
+  const allItems = await Item.find()
+    .sort({ name: 1 })
+    .populate('category')
+    .exec();
+  res.render('item_list', {
+    title: 'Item List',
+    item_list: allItems,
+  });
 });
 // Display specific item
 exports.item_detail = asyncHandler(async (req, res, next) => {
