@@ -122,11 +122,29 @@ exports.item_delete_get = asyncHandler(async (req, res, next) => {
 });
 // Handle item delete form on POST.
 exports.item_delete_post = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item delete POST');
+  await Item.findByIdAndRemove(req.body.itemid);
+  res.redirect('/shop/items');
 });
 // Display item update form on GET
 exports.item_update_get = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item update GET');
+  // Get item and category for form
+  const [item, allCategories] = await Promise.all([
+    Item.findById(req.params.id).exec(),
+    Category.find().exec(),
+  ]);
+
+  if (item === null) {
+    // No results.
+    const err = new Error('Item not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('item_form', {
+    title: 'Update Item',
+    category: allCategories,
+    item,
+  });
 });
 // Handle item update form on POST.
 exports.item_update_post = asyncHandler(async (req, res, next) => {
