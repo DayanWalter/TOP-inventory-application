@@ -13,10 +13,7 @@ const app = express();
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 
-const dev_db_url =
-  'mongodb+srv://synthcyrax:87XJfeA2uX8wktUQ@cluster0.vrdsiqn.mongodb.net/?retryWrites=true&w=majority';
-
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const mongoDB = process.env.MONGODB_URI || process.env.DEV_DB_ULR;
 
 main().catch((err) => console.log(err));
 async function main() {
