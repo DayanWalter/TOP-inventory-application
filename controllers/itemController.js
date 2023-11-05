@@ -100,7 +100,7 @@ exports.item_create_post = [
         errors: errors.array(),
       });
     } else {
-      // Data from form is valid. Save book.
+      // Data from form is valid. Save item.
       await item.save();
       res.redirect(item.url);
     }
