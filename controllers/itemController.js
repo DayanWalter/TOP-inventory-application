@@ -108,7 +108,17 @@ exports.item_create_post = [
 ];
 // Display item delete form on GET
 exports.item_delete_get = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item delete GET');
+  // Get details of item
+  const item = await Item.findById(req.params.id).exec();
+
+  if (item === null) {
+    res.redirect('/shop/items');
+  }
+
+  res.render('item_delete', {
+    title: 'Delete Item',
+    item,
+  });
 });
 // Handle item delete form on POST.
 exports.item_delete_post = asyncHandler(async (req, res, next) => {
