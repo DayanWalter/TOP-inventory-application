@@ -93,7 +93,23 @@ exports.category_delete_get = asyncHandler(async (req, res, next) => {
 });
 // Handle Category delete form on POST.
 exports.category_delete_post = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Category delete POST');
+  // Get details of category and all their items(in parallel)
+  const [category, allItemsByCategory] = await Promise.all([
+    Category.findById(req.params.id).exec(),
+    Item.find({ category: req.params.id }, 'name description').exec(),
+  ]);
+
+  if (allItemsByCategory.length > 0) {
+    res.render('category_delete', {
+      title: 'Delete Category',
+      category,
+      category_items: allItemsByCategory,
+    });
+    return;
+  } else {
+    await Category.findByIdAndRemove(req.body.categoryid);
+    res.redirect('/shop/category');
+  }
 });
 // Display Category update form on GET
 exports.category_update_get = asyncHandler(async (req, res, next) => {
