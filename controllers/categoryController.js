@@ -166,10 +166,6 @@ exports.category_update_post = [
       );
       // Redirect to author detail page.
       res.redirect(updatedCategory.url);
-
-      // // Data from form is valid. Save category.
-      // await category.save();
-      // res.redirect(category.url);
     }
   }),
 ];

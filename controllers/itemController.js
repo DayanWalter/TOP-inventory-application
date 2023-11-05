@@ -147,6 +147,52 @@ exports.item_update_get = asyncHandler(async (req, res, next) => {
   });
 });
 // Handle item update form on POST.
-exports.item_update_post = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: item update POST');
-});
+exports.item_update_post = [
+  // Validate and sanitize fields.
+  body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
+  body('category', 'Category must not be empty')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('description', 'Description must not be empty')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('price', 'Price must not be empty').trim().isLength({ min: 1 }).escape(),
+  body('stock', 'Stock must not be empty').trim().isLength({ min: 1 }).escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a Item object with escaped and trimmed data.
+    const item = new Item({
+      name: req.body.name,
+      category: req.body.category,
+      description: req.body.description,
+      price: req.body.price,
+      stock: req.body.stock,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/error messages.
+
+      // Get all categories for form.
+      const allCategories = await Category.find().exec();
+
+      res.render('item_form', {
+        title: 'Create Item',
+        category: allCategories,
+        item,
+        errors: errors.array(),
+      });
+    } else {
+      // Data from form is valid. Update the record.
+      const updatedItem = await Item.findByIdAndUpdate(req.params.id, item, {});
+      // Redirect to item detail page.
+      res.redirect(updatedItem.url);
+    }
+  }),
+];
