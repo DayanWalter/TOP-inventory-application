@@ -75,7 +75,21 @@ exports.category_create_post = [
 ];
 // Display Category delete form on GET
 exports.category_delete_get = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Category delete GET');
+  // Get details of category and all their items(in parallel)
+  const [category, allItemsByCategory] = await Promise.all([
+    Category.findById(req.params.id).exec(),
+    Item.find({ category: req.params.id }, 'name description').exec(),
+  ]);
+
+  if (category === null) {
+    res.redirect('/shop/category');
+  }
+
+  res.render('category_delete', {
+    title: 'Delete Category',
+    category,
+    category_items: allItemsByCategory,
+  });
 });
 // Handle Category delete form on POST.
 exports.category_delete_post = asyncHandler(async (req, res, next) => {
