@@ -7,7 +7,7 @@ const asyncHandler = require('express-async-handler');
 
 // Display index
 exports.index = asyncHandler(async (req, res, next) => {
-  // Get details of books, book instances, authors and genre counts (in parallel)
+  // Get details of items and category counts (in parallel)
   const [numItems, numCategories] = await Promise.all([
     Item.countDocuments({}).exec(),
     Category.countDocuments({}).exec(),
